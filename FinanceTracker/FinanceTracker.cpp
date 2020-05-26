@@ -188,6 +188,11 @@ public:
 
 	}
 
+	void exit()
+	{
+
+	}
+
 	void printTransactions(bool bMenu)
 	{
 		int index = 0;
