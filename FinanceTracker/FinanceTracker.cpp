@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include<TCHAR.H>
+#include <fstream>
 
 class Transaction
 {
@@ -38,9 +38,17 @@ class FinanceTracker
 {
 public:
 	std::vector <Transaction> transactions;
+	std::fstream file;
+
 
 	void open()
 	{
+	
+		file.open("financeTracker.txt");
+		if (file.is_open())
+			std::cout << "yo";
+		else if (!file.is_open())
+			std::cout << "ugh";
 		std::cout << "Hello, welcome to Finance Tracker!\nPlease type 'return' if you already have stored data.\n";
 		std::cout << "Please type 'new' if you are a new user, or don't have any data\n";
 		getInitialInput();
@@ -52,7 +60,7 @@ public:
 		std::cin >> input;
 		if (input == "return")
 			// read in previous data from text file
-			std::cout << "This feature will soon be added";
+			readData();
 		else if (input == "new")
 			menu();
 		else
@@ -70,7 +78,7 @@ public:
 		std::cin >> input;
 		if (input == "1")
 			addTransaction();
-		else if (input == "2") 
+		else if (input == "2")
 			deleteTransaction();
 		else if (input == "3")
 			editTransaction();
@@ -78,6 +86,8 @@ public:
 			saveData();
 		else if (input == "5")
 			printTransactions(true);
+		else if (input == "6")
+			exit();
 		else
 		{
 			std::cout << "Please enter a valid response\n";
@@ -185,11 +195,29 @@ public:
 
 	void saveData()
 	{
+	
+		int index = 0;
+		for (Transaction t : transactions)
+		{
+			index++;
+			file << index << "," << t.location << "," << t.amount << "," << t.date;
+		}
+		std::cout << "Your data has been saved\n";
+		menu();
+	}
 
+	void readData()
+	{
+		std::string line;
+		while (getline(file, line))
+		{
+			std::cout << line;
+		}
 	}
 
 	void exit()
 	{
+		std::cout << "Would you like to save before you exit?\n Enter 1 to save, and 2 to close without saving\n";
 
 	}
 
