@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+// if you type in return with data in the txt file and then add a transaction, it doesnt save properly
 
 class Transaction
 {
@@ -44,11 +45,6 @@ public:
 	void open()
 	{
 	
-		file.open("financeTracker.txt");
-		if (file.is_open())
-			std::cout << "yo";
-		else if (!file.is_open())
-			std::cout << "ugh";
 		std::cout << "Hello, welcome to Finance Tracker!\nPlease type 'return' if you already have stored data.\n";
 		std::cout << "Please type 'new' if you are a new user, or don't have any data\n";
 		getInitialInput();
@@ -60,7 +56,7 @@ public:
 		std::cin >> input;
 		if (input == "return")
 			// read in previous data from text file
-			readData();
+			readData(true);
 		else if (input == "new")
 			menu();
 		else
@@ -83,7 +79,7 @@ public:
 		else if (input == "3")
 			editTransaction();
 		else if (input == "4")
-			saveData();
+			saveData(true);
 		else if (input == "5")
 			printTransactions(true);
 		else if (input == "6")
@@ -193,32 +189,85 @@ public:
 		printTransactions(true);
 	}
 
-	void saveData()
+	void saveData(bool bValue)
 	{
-	
-		int index = 0;
-		for (Transaction t : transactions)
+		file.open("financeTracker.txt.txt", std::ios::app);
+		if (file.is_open())
 		{
-			index++;
-			file << index << "," << t.location << "," << t.amount << "," << t.date;
+			//readData(false);
+			int index = 0;
+			for (Transaction t : transactions)
+			{
+				index++;
+				file << index << "," << t.location << "," << t.amount << "," << t.date << "\n";
+			}
+			std::cout << "Your data has been saved\n";
+			file.close();
+			if(bValue)
+				menu();
 		}
-		std::cout << "Your data has been saved\n";
-		menu();
+		else
+		{
+			std::cout << "Data could not be saved";
+		}
 	}
 
-	void readData()
+	void readData(bool bValue)
 	{
+		file.open("financeTracker.txt.txt", std::ios::in);
 		std::string line;
+		std::string comma = ",";
+
+		// parse through line
 		while (getline(file, line))
 		{
-			std::cout << line;
+			if (bValue)
+			{
+				Transaction t;
+				char* end;
+				// getting index
+				std::string basicIndex = line.substr(0, line.find(comma));
+				t.index = strtod(basicIndex.c_str(), &end);
+				line.erase(0, line.find(comma) + 1);
+				//getting location
+				std::string location = line.substr(0, line.find(comma));
+				t.location = location;
+				line.erase(0, line.find(comma) + 1);
+				// getting amount
+				std::string basicAmount = line.substr(0, line.find(comma));
+				t.amount = strtod(basicAmount.c_str(), &end);
+				line.erase(0, line.find(comma) + 1);
+				//getting date
+				std::string date = line;
+				t.date = date;
+
+				transactions.push_back(t);
+			}
+			else
+			{
+				line.replace(0, line.length(), "");
+			}
 		}
+		std::cout << "Here is your stored data:\n";
+		file.close();
+		printTransactions(true);
 	}
 
 	void exit()
 	{
-		std::cout << "Would you like to save before you exit?\n Enter 1 to save, and 2 to close without saving\n";
-
+		std::cout << "Would you like to save before you exit?\nEnter 1 to save, and 2 to close without saving\n";
+		int num;
+		std::cin >> num;
+		switch (num)
+		{
+		case 1:
+			saveData(false);
+			break;
+		case 2:
+			break;
+		default:
+			break;
+		}
 	}
 
 	void printTransactions(bool bMenu)
