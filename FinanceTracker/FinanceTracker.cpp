@@ -6,7 +6,6 @@
 #include <string>
 #include <sstream>
 #include <fstream>
-// if you type in return with data in the txt file and then add a transaction, it doesnt save properly
 
 class Transaction
 {
@@ -165,10 +164,10 @@ public:
 					double dAmount;
 					char* end;
 					dAmount = strtod(newData.c_str(), &end);
-					transactions[number -1].amount = dAmount;
+					transactions[number - 1].amount = dAmount;
 					break;
 				case 3:
-					transactions[number-1].date = newData;
+					transactions[number - 1].date = newData;
 					break;
 				default:
 					break;
@@ -191,6 +190,7 @@ public:
 
 	void saveData(bool bValue)
 	{
+		remove("financeTracker.txt.txt");
 		file.open("financeTracker.txt.txt", std::ios::app);
 		if (file.is_open())
 		{

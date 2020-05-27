@@ -1,7 +1,5 @@
 1,scei,9,2
-1,scei,9,2
 2,sdfl,22,3
-1,scei,9,2
-2,scei,9,2
-3,sdfl,22,3
+3,scei,9,2
 4,mslfkj,22,3
+5,walmart,89,june
